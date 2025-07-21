@@ -1,6 +1,7 @@
 """Manage redo-related environment variables."""
 import os, sys
 from .atoi import atoi
+from pathlib import Path
 
 is_toplevel = False
 
@@ -84,19 +85,10 @@ def init(targets):
     if not os.environ.get('REDO'):
         # toplevel call to redo
         is_toplevel = True
-        exenames = [os.path.abspath(sys.argv[0]),
-                    os.path.realpath(sys.argv[0])]
-        dirnames = [os.path.dirname(p) for p in exenames]
-        trynames = ([os.path.abspath(p+'/../lib/redo') for p in dirnames] +
-                    [p+'/../redo' for p in dirnames] +
-                    dirnames)
-        seen = {}
-        dirs = []
-        for k in trynames:
-            if not seen.get(k):
-                seen[k] = 1
-                dirs.append(k)
-        os.environ['PATH'] = ':'.join(dirs) + ':' + os.environ['PATH']
+        redo_path = os.environ.get("REDO_PATH")
+        if redo_path is None:
+            redo_path = Path(os.path.realpath(sys.argv[0])).parent.parent / "lib" / "redo"
+        os.environ['PATH'] = str(redo_path) + ':' + os.environ['PATH']
         os.environ['REDO'] = os.path.abspath(sys.argv[0])
 
     if not os.environ.get('REDO_BASE'):
