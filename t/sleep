@@ -1,4 +1,4 @@
-PATH=/bin:/usr/bin
+#!/bin/sh
 if [ -n "$SLEEP" ]; then
 	exec sleep "$@"
 fi
